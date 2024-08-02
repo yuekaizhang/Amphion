@@ -31,14 +31,14 @@
         "exponentiallr": {
           "gamma": 0.999999
         },
-        "batch_size": 10,
+        "batch_size": 8,
         "max_tokens": 10500,
         "max_sentences": 64,
         "random_seed": 0
     }, 
     "dataset": {
       "dataset_list":["train-clean-360"],
-      "data_dir": "/workspace/libritts-r"  // You can also change to other splits like "dev-clean"
+      "data_dir": "/workspace/libritts-r/LibriTTS_R"  // You can also change to other splits like "dev-clean"
     },
     "model": {
       "phone_vocab_size": 300,

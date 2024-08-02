@@ -1,0 +1,14 @@
+easydict
+g2p_en
+encodec
+# training
+ruamel_yaml
+json5
+lhotse
+librosa
+unidecode
+fairseq
+transformers
+torchmetrics
+diffusers
+tensorboard
