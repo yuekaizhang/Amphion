@@ -37,7 +37,7 @@
         "random_seed": 0
     }, 
     "dataset": {
-      "dataset_list":["train-clean-360"],
+      "dataset_list":["train-clean-360", "train-clean-100", "train-other-500"],
       "data_dir": "/workspace/libritts-r/LibriTTS_R"  // You can also change to other splits like "dev-clean"
     },
     "model": {
