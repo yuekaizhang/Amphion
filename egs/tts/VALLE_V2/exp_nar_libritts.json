@@ -1,7 +1,7 @@
 {
     "model_type": "VALLE_V2_NAR",
     "log_dir": "./ckpt/VALLE_V2",
-    "use_speechtokenizer": true,
+    "use_speechtokenizer": false,
     "train": {
         "gradient_accumulation_step": 1,
         "find_unused_parameters": true,
@@ -31,14 +31,14 @@
         "exponentiallr": {
           "gamma": 0.999999
         },
-        "batch_size": 5,
+        "batch_size": 10,
         "max_tokens": 10500,
         "max_sentences": 64,
         "random_seed": 0
     }, 
     "dataset": {
       "dataset_list":["train-clean-360"],
-      "data_dir": "/path/to/your/libritts"  // You can also change to other splits like "dev-clean"
+      "data_dir": "/workspace/libritts-r"  // You can also change to other splits like "dev-clean"
     },
     "model": {
       "phone_vocab_size": 300,
