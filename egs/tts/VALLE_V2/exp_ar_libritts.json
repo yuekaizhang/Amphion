@@ -31,7 +31,7 @@
         "exponentiallr": {
           "gamma": 0.999999
         },
-        "batch_size": 32,
+        "batch_size": 16,
         "max_tokens": 5000,
         "max_sentences": 64,
         "random_seed": 0

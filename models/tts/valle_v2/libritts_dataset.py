@@ -167,7 +167,12 @@ class VALLEDataset(Dataset):
         phone = self.trans_cache["Normalized_text"][uid]
         phone = phonemizer_g2p(phone, "en")[1]
         # load speech
-        speech, _ = librosa.load(full_file_path, sr=SAMPLE_RATE)
+        # speech, _ = librosa.load(full_file_path, sr=SAMPLE_RATE)
+        try:
+            speech, _ = librosa.load(full_file_path, sr=SAMPLE_RATE)
+        except FileNotFoundError:
+            print(f"Warning: File not found {full_file_path}")
+            return None
         # if self.resample_to_24k:
         #     speech = librosa.resample(speech, orig_sr=SAMPLE_RATE, target_sr=24000)
         # speech = torch.tensor(speech, dtype=torch.float32)
