@@ -12,3 +12,5 @@ transformers
 torchmetrics
 diffusers
 tensorboard
+accelerate
+pandas
