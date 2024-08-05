@@ -5,7 +5,7 @@
 
 import torch
 import torchaudio
-
+from safetensors.torch import load_model
 
 class ValleInference(torch.nn.Module):
     def __init__(
@@ -38,7 +38,10 @@ class ValleInference(torch.nn.Module):
         )
         # change the following path to your trained model path
         assert ar_path is not None
-        self.ar_model.load_state_dict(torch.load(ar_path, map_location="cpu"))
+        if ar_path.endswith(".safetensors"):
+            load_model(self.ar_model, ar_path)
+        else:
+            self.ar_model.load_state_dict(torch.load(ar_path, map_location="cpu"))
         self.ar_model.eval().to(self.device)
 
         # prepare pretrained VALLE NAR model
@@ -57,7 +60,10 @@ class ValleInference(torch.nn.Module):
             num_hidden_layers=16,
         )
         assert nar_path is not None
-        self.nar_model.load_state_dict(torch.load(nar_path, map_location="cpu"))
+        if nar_path.endswith(".safetensors"):
+            load_model(self.nar_model, nar_path)
+        else:
+            self.nar_model.load_state_dict(torch.load(nar_path, map_location="cpu"))
         self.nar_model.eval().to(self.device)
 
         # prepare codec encoder
