@@ -1,3 +1,4 @@
+import os
 import argparse
 import logging
 import librosa
@@ -5,6 +6,9 @@ import torch
 import torchaudio
 from models.tts.valle_v2.valle_inference import ValleInference
 from models.tts.valle_v2.g2p_processor import G2pProcessor
+
+LIBRITTS_R="/workspace/libritts-r/"
+LIBRITTS="/workspace/libritts/"
 
 def get_parser():
     parser = argparse.ArgumentParser(
@@ -35,7 +39,7 @@ def get_parser():
     parser.add_argument(
         "--demo-manifest-path",
         type=str,
-        default="/workspace/lifeiteng.github.com/valle/libritts.txt",
+        default="/workspace/Amphion/libritts.txt",
         help="Path to the valle demo manifest file",
     )
 
@@ -46,10 +50,17 @@ def get_parser():
         help="Path to the speechtokenizer model file",
     )
 
+    parser.add_argument(
+        "--output-dir",
+        type=str,
+        default="/workspace/Amphion/audio_samples",
+        help="Path to the valle demo files",
+    )
+
     return parser
 
 def infer_audio(model, g2p, prompt_text, text, prompt_audio, device):
-    wav, _ = librosa.load(prompt_audio, sr=16000)
+    wav, _ = librosa.load(prompt_audio, sr=16000) # TODO: check this??
     wav = torch.tensor(wav, dtype=torch.float32)
     prompt_transcript = g2p(prompt_text, 'en')[1]
     target_transcript = g2p(text, 'en')[1]
@@ -90,18 +101,31 @@ def main():
     )
     logging.info("model loaded")
     g2p = G2pProcessor()
+
     with open(args.demo_manifest_path, "r") as f:
         i = 0
         # break after 4 lines
         for line in f:
             fields = line.strip().split("\t")
             assert len(fields) == 4
-            prompt_text, prompt_audio, text, audio_path = fields
-            # change audio_path from audios/librispeech/61-70970-0024/libritts.wav to audios/librispeech/61-70970-0024/libritts_r_valle.wav
-            audio_path = audio_path.replace(".wav", "_r_valle.wav")
-            audio_path = args.demo_manifest_path.replace("libritts.txt", audio_path)
-            prompt_audio = args.demo_manifest_path.replace("libritts.txt", prompt_audio)
-            
+            prompt_text, prompt_audio, text, _ = fields
+
+            # LibriTTS_R/test-clean/908/157963/908_157963_000020_000000.wav + LI
+            if "LibriTTS_R/" in prompt_audio:
+                prompt_audio = LIBRITTS_R + prompt_audio
+            elif "LibriTTS/" in prompt_audio:
+                prompt_audio = LIBRITTS + prompt_audio
+            else:
+                raise ValueError(f"Unknown dataset: {prompt_audio}")
+
+            # speaker id is 908
+            spk_id = prompt_audio.split("/")[-3]
+            dataset_name = prompt_audio.split("/")[-5]
+            subdir = dataset_name + "_" + spk_id
+            # audio_path is args.output_dir/dataset_name_spk_id/amphion_valle.wav
+            audio_path = os.path.join(args.output_dir, subdir, "amphion_valle.wav")
+            os.makedirs(os.path.dirname(audio_path), exist_ok=True)
+
             logging.info(f"synthesize text: {text}")
             output_wav = infer_audio(model, g2p, prompt_text, text, prompt_audio, args.device)
 
